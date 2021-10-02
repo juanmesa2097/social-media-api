@@ -39,6 +39,29 @@ async function main() {
   });
 
   console.log({ alice, bob });
+
+  await prisma.tag.deleteMany();
+
+  const tags = await prisma.tag.createMany({
+    data: [
+      { name: 'Featured' },
+      { name: 'Sports' },
+      { name: 'Music' },
+      { name: 'Movies' },
+      { name: 'Traveling' },
+      { name: 'Food' },
+      { name: 'LifeStyle' },
+      { name: 'Health' },
+      { name: 'Science' },
+      { name: 'Nature' },
+      { name: 'Web' },
+      { name: 'Engineering' },
+      { name: 'Art' },
+      { name: 'Fashion' },
+    ],
+  });
+
+  console.log(tags);
 }
 
 main()
