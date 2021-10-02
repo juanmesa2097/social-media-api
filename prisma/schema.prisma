@@ -49,8 +49,10 @@ model User {
   /// @Validator.IsEnum(Role)
   role Role @default(USER)
 
-  detail UserDetail?
-  posts  Post[]
+  profile  Profile?
+  posts    Post[]
+  comments PostComment[]
+  reaction PostReaction[]
 
   @@map("user")
 }
@@ -60,7 +62,7 @@ enum UserStatus {
   INACTIVE
 }
 
-model UserDetail {
+model Profile {
   id Int @id @default(autoincrement())
 
   /// @Validator.IsNotEmpty()
@@ -73,20 +75,22 @@ model UserDetail {
 
   /// @Validator.IsOptional()
   /// @Validator.MaxLength(300)
-  bio String? @db.VarChar(300)
+  bio String? @default("I'm a mysterious individual who has not yet fill out my bio.") @db.VarChar(300)
 
   /// @Validator.IsOptional()
   /// @Validator.IsDate()
   dateOfBirth DateTime? @map("date_of_birth")
 
-  avatarUrl String?  @map("avatar_url")
+  /// @Validator.IsOptional()
+  avatarUrl String? @map("avatar_url")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("user_detail")
+  @@map("profile")
 }
 
 model Post {
@@ -107,10 +111,82 @@ model Post {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  authorId String @map("author_id")
   author   User   @relation(fields: [authorId], references: [id])
-  authorId String
+
+  comments  PostComment[]
+  reactions PostReaction[]
+  tags      PostTag[]
 
   @@map("post")
+}
+
+model PostComment {
+  id Int @id @default(autoincrement())
+
+  /// @Validator.IsNotEmpty()
+  /// @Validator.MaxLength(300)
+  content String @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  postId Int?  @map("post_id")
+  post   Post? @relation(fields: [postId], references: [id])
+
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@map("post_comment")
+}
+
+model PostReaction {
+  id Int @id @default(autoincrement())
+
+  /// @Validator.IsEnum(ReactionType)
+  reaction ReactionType
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  postId Int?  @map("post_id")
+  post   Post? @relation(fields: [postId], references: [id])
+
+  userId String? @map("user_id")
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@map("post_reaction")
+}
+
+model PostTag {
+  id Int @id @default(autoincrement())
+
+  postId Int  @map("post_id")
+  post   Post @relation(fields: [postId], references: [id])
+
+  tagId Int @map("tag_id")
+  tag   Tag @relation(fields: [tagId], references: [id])
+
+  @@map("post_tag")
+}
+
+model Tag {
+  id Int @id @default(autoincrement())
+
+  /// @Validator.IsNotEmpty()
+  /// @Validator.MaxLength(20)
+  name String @db.VarChar(20)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  PostTag PostTag[]
+  @@map("tag")
+}
+
+enum ReactionType {
+  LIKE
+  DISLIKE
 }
 
 enum Role {

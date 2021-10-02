@@ -12,7 +12,7 @@ async function main() {
       email: 'alice@prisma.io',
       password: '$2b$10$1XVF0bILGrFGHPMQbtp/betn.OojId7b1omrrqNp1el8AEcBSXquO', // FirstPassword123
       role: 'USER',
-      detail: {
+      profile: {
         create: {
           firstName: 'Alice',
           lastName: 'Parker',
@@ -29,11 +29,10 @@ async function main() {
       email: 'bob@prisma.io',
       password: '$2b$10$EpreVGbl.d0qzfmGZwWb3.gdiDD4biBMs4kP5PJWCt3wveclHzoV2', // SecondPassword123
       role: 'ADMIN',
-      detail: {
+      profile: {
         create: {
           firstName: 'Bob',
           lastName: 'Jones',
-          bio: `This is Bob's bio`,
         },
       },
     },

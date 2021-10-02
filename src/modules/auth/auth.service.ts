@@ -37,7 +37,7 @@ export class AuthService {
         data: {
           email,
           password: hashedPassword,
-          detail: {
+          profile: {
             create: {
               firstName,
               lastName,

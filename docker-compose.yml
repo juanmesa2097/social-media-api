@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  nest-api:
-    container_name: nest-boilerplate
+  api:
+    container_name: medium-clone-api
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,10 +14,10 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: postgres
+    container_name: medium-clone-db
     restart: always
     ports:
-      - 5432:5432
+      - 5433:5432
     env_file:
       - .env
     volumes:
