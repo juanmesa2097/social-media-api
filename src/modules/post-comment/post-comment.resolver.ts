@@ -12,7 +12,7 @@ import { Authorize } from '../auth/guards/authorize.guard';
 import { PostCommentService } from './post-comment.service';
 
 @Authorize()
-@Resolver()
+@Resolver(() => PostComment)
 export class PostCommentResolver {
   private readonly POST_COMMENT_CREATED = 'post_comment_created';
   private readonly POST_COMMENT_UPDATED = 'post_comment_updated';

@@ -10,7 +10,7 @@ import { PostReactionWhereUniqueInput } from 'src/@generated/post-reaction/post-
 import { PostReaction } from 'src/@generated/post-reaction/post-reaction.model';
 import { PostReactionService } from './post-reaction.service';
 
-@Resolver()
+@Resolver(() => PostReaction)
 export class PostReactionResolver {
   private readonly POST_REACTION_CREATED = 'post_reaction_created';
   private readonly POST_REACTION_UPDATED = 'post_reaction_updated';
