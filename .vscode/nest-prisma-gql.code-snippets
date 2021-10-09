@@ -111,7 +111,7 @@
       "  constructor(private $2Service: $1Service) {}",
       "",
       "  @Query(() => [$1])",
-      "  async $2(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
+      "  async $3(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
       "    const select = new PrismaSelect(info).value;",
       "    return this.$2Service.get(args, select);",
       "  }",
@@ -143,9 +143,9 @@
     "prefix": "nresquery",
     "body": [
       "@Query(() => [$1])",
-      "async $3(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
+      "async $2(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
       "  const select = new PrismaSelect(info).value;",
-      "  return this.$2Service.get(args, select);",
+      "  return this.$3Service.get(args, select);",
       "}"
     ],
     "description": "Add GraphQl query"
@@ -210,7 +210,7 @@
       "  }",
       "",
       "  @Query(() => [$1])",
-      "  async $4(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
+      "  async $5(@Args() args: FindMany$1Args, @Info() info: GraphQLResolveInfo): Promise<$1[]> {",
       "    const select = new PrismaSelect(info).value;",
       "    return this.$4Service.get(args, select);",
       "  }",

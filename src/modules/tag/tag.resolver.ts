@@ -15,7 +15,7 @@ export class TagResolver {
   constructor(private tagService: TagService) {}
 
   @Query(() => [Tag])
-  async tag(@Args() args: FindManyTagArgs, @Info() info: GraphQLResolveInfo): Promise<Tag[]> {
+  async tags(@Args() args: FindManyTagArgs, @Info() info: GraphQLResolveInfo): Promise<Tag[]> {
     const select = new PrismaSelect(info).value;
     return this.tagService.get(args, select);
   }

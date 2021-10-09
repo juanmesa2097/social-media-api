@@ -33,7 +33,7 @@ export class PostCommentResolver {
   }
 
   @Query(() => [PostComment])
-  async postComment(
+  async postComments(
     @Args() args: FindManyPostCommentArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<PostComment[]> {
