@@ -11,7 +11,6 @@ import { Post } from 'src/@generated/post/post.model';
 import { Authorize } from '../auth/guards/authorize.guard';
 import { PostService } from './post.service';
 
-@Authorize()
 @Resolver(() => Post)
 export class PostResolver {
   private readonly POST_CREATED = 'post_created';
@@ -26,11 +25,12 @@ export class PostResolver {
   }
 
   @Query(() => [Post])
-  async post(@Args() args: FindManyPostArgs, @Info() info: GraphQLResolveInfo): Promise<Post[]> {
+  async posts(@Args() args: FindManyPostArgs, @Info() info: GraphQLResolveInfo): Promise<Post[]> {
     const select = new PrismaSelect(info).value;
     return this.postService.get(args, select);
   }
 
+  // @Authorize()
   @Mutation(() => Post)
   async postCreate(@Args('data') data: PostCreateInput): Promise<Post> {
     const createdPost = this.postService.create(data);
@@ -38,6 +38,7 @@ export class PostResolver {
     return createdPost;
   }
 
+  @Authorize()
   @Mutation(() => Post)
   async postUpdate(
     @Args('data') data: PostUpdateInput,
@@ -48,6 +49,7 @@ export class PostResolver {
     return updatedPost;
   }
 
+  @Authorize()
   @Mutation(() => Post)
   async postDelete(@Args('where') where: PostWhereUniqueInput): Promise<Post> {
     const deletedPost = this.postService.delete(where);

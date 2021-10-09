@@ -33,7 +33,7 @@ export class PostReactionResolver {
   }
 
   @Query(() => [PostReaction])
-  async postReaction(
+  async postReactions(
     @Args() args: FindManyPostReactionArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<PostReaction[]> {
