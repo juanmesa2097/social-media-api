@@ -10,12 +10,12 @@ export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => AccessToken)
-  async signUp(@Args('data') data: SignUpInput) {
+  async authSignUp(@Args('data') data: SignUpInput) {
     return this.authService.signUp(data);
   }
 
   @Mutation(() => AccessToken)
-  async signIn(@Args('data') data: SignInInput) {
+  async authSignIn(@Args('data') data: SignInInput) {
     return this.authService.signIn(data);
   }
 

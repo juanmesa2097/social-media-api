@@ -119,12 +119,21 @@ input IntNullableFilter {
 }
 
 type Mutation {
+  authSignIn(data: SignInInput!): AccessToken!
+  authSignUp(data: SignUpInput!): AccessToken!
+  postCommentCreate(data: PostCommentCreateInput!): PostComment!
+  postCommentDelete(where: PostCommentWhereUniqueInput!): PostComment!
+  postCommentUpdate(data: PostCommentUpdateInput!, where: PostCommentWhereUniqueInput!): PostComment!
   postCreate(data: PostCreateInput!): Post!
   postDelete(where: PostWhereUniqueInput!): Post!
+  postReactionCreate(data: PostReactionCreateInput!): PostReaction!
+  postReactionDelete(where: PostReactionWhereUniqueInput!): PostReaction!
+  postReactionUpdate(data: PostReactionUpdateInput!, where: PostReactionWhereUniqueInput!): PostReaction!
   postUpdate(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post!
   refreshToken: AccessToken!
-  signIn(data: SignInInput!): AccessToken!
-  signUp(data: SignUpInput!): AccessToken!
+  tagCreate(data: TagCreateInput!): Tag!
+  tagDelete(where: TagWhereUniqueInput!): Tag!
+  tagUpdate(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag!
   userDelete(where: UserWhereUniqueInput!): User!
   userUpdate(data: UserUpdateInput!, where: UserWhereUniqueInput!): User!
   userUpdateRole(data: UpdateUserRoleInput!, where: UserWhereUniqueInput!): User!
@@ -263,6 +272,14 @@ type PostComment {
   userId: String
 }
 
+input PostCommentCreateInput {
+  content: String!
+  createdAt: DateTime
+  post: PostCreateNestedOneWithoutCommentsInput
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutCommentsInput
+}
+
 input PostCommentCreateManyPostInput {
   content: String!
   createdAt: DateTime
@@ -337,6 +354,26 @@ input PostCommentOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input PostCommentOrderByWithRelationInput {
+  content: SortOrder
+  createdAt: SortOrder
+  id: SortOrder
+  post: PostOrderByWithRelationInput
+  postId: SortOrder
+  updatedAt: SortOrder
+  user: UserOrderByWithRelationInput
+  userId: SortOrder
+}
+
+enum PostCommentScalarFieldEnum {
+  content
+  createdAt
+  id
+  postId
+  updatedAt
+  userId
+}
+
 input PostCommentScalarWhereInput {
   AND: [PostCommentScalarWhereInput!]
   NOT: [PostCommentScalarWhereInput!]
@@ -347,6 +384,14 @@ input PostCommentScalarWhereInput {
   postId: IntNullableFilter
   updatedAt: DateTimeFilter
   userId: StringNullableFilter
+}
+
+input PostCommentUpdateInput {
+  content: StringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  post: PostUpdateOneWithoutCommentsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  user: UserUpdateOneWithoutCommentsInput
 }
 
 input PostCommentUpdateManyMutationInput {
@@ -498,6 +543,12 @@ input PostCreateNestedOneWithoutReactionsInput {
   create: PostCreateWithoutReactionsInput
 }
 
+input PostCreateNestedOneWithoutTagsInput {
+  connect: PostWhereUniqueInput
+  connectOrCreate: PostCreateOrConnectWithoutTagsInput
+  create: PostCreateWithoutTagsInput
+}
+
 input PostCreateOrConnectWithoutAuthorInput {
   create: PostCreateWithoutAuthorInput!
   where: PostWhereUniqueInput!
@@ -510,6 +561,11 @@ input PostCreateOrConnectWithoutCommentsInput {
 
 input PostCreateOrConnectWithoutReactionsInput {
   create: PostCreateWithoutReactionsInput!
+  where: PostWhereUniqueInput!
+}
+
+input PostCreateOrConnectWithoutTagsInput {
+  create: PostCreateWithoutTagsInput!
   where: PostWhereUniqueInput!
 }
 
@@ -542,6 +598,17 @@ input PostCreateWithoutReactionsInput {
   createdAt: DateTime
   published: Boolean
   tags: PostTagCreateNestedManyWithoutPostInput
+  title: String!
+  updatedAt: DateTime
+}
+
+input PostCreateWithoutTagsInput {
+  author: UserCreateNestedOneWithoutPostsInput!
+  comments: PostCommentCreateNestedManyWithoutPostInput
+  content: String!
+  createdAt: DateTime
+  published: Boolean
+  reactions: PostReactionCreateNestedManyWithoutPostInput
   title: String!
   updatedAt: DateTime
 }
@@ -579,6 +646,14 @@ type PostReaction {
   updatedAt: DateTime!
   user: User
   userId: String
+}
+
+input PostReactionCreateInput {
+  createdAt: DateTime
+  post: PostCreateNestedOneWithoutReactionsInput
+  reaction: ReactionType!
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutReactionInput
 }
 
 input PostReactionCreateManyPostInput {
@@ -655,6 +730,26 @@ input PostReactionOrderByRelationAggregateInput {
   _count: SortOrder
 }
 
+input PostReactionOrderByWithRelationInput {
+  createdAt: SortOrder
+  id: SortOrder
+  post: PostOrderByWithRelationInput
+  postId: SortOrder
+  reaction: SortOrder
+  updatedAt: SortOrder
+  user: UserOrderByWithRelationInput
+  userId: SortOrder
+}
+
+enum PostReactionScalarFieldEnum {
+  createdAt
+  id
+  postId
+  reaction
+  updatedAt
+  userId
+}
+
 input PostReactionScalarWhereInput {
   AND: [PostReactionScalarWhereInput!]
   NOT: [PostReactionScalarWhereInput!]
@@ -665,6 +760,14 @@ input PostReactionScalarWhereInput {
   reaction: EnumReactionTypeFilter
   updatedAt: DateTimeFilter
   userId: StringNullableFilter
+}
+
+input PostReactionUpdateInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  post: PostUpdateOneWithoutReactionsInput
+  reaction: EnumReactionTypeFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  user: UserUpdateOneWithoutReactionInput
 }
 
 input PostReactionUpdateManyMutationInput {
@@ -806,6 +909,16 @@ input PostTagCreateManyPostInputEnvelope {
   skipDuplicates: Boolean
 }
 
+input PostTagCreateManyTagInput {
+  id: Int
+  postId: Int!
+}
+
+input PostTagCreateManyTagInputEnvelope {
+  data: [PostTagCreateManyTagInput!]!
+  skipDuplicates: Boolean
+}
+
 input PostTagCreateNestedManyWithoutPostInput {
   connect: [PostTagWhereUniqueInput!]
   connectOrCreate: [PostTagCreateOrConnectWithoutPostInput!]
@@ -813,13 +926,29 @@ input PostTagCreateNestedManyWithoutPostInput {
   createMany: PostTagCreateManyPostInputEnvelope
 }
 
+input PostTagCreateNestedManyWithoutTagInput {
+  connect: [PostTagWhereUniqueInput!]
+  connectOrCreate: [PostTagCreateOrConnectWithoutTagInput!]
+  create: [PostTagCreateWithoutTagInput!]
+  createMany: PostTagCreateManyTagInputEnvelope
+}
+
 input PostTagCreateOrConnectWithoutPostInput {
   create: PostTagCreateWithoutPostInput!
   where: PostTagWhereUniqueInput!
 }
 
+input PostTagCreateOrConnectWithoutTagInput {
+  create: PostTagCreateWithoutTagInput!
+  where: PostTagWhereUniqueInput!
+}
+
 input PostTagCreateWithoutPostInput {
   tag: TagCreateNestedOneWithoutPostTagInput!
+}
+
+input PostTagCreateWithoutTagInput {
+  post: PostCreateNestedOneWithoutTagsInput!
 }
 
 input PostTagListRelationFilter {
@@ -841,6 +970,11 @@ input PostTagScalarWhereInput {
   tagId: IntFilter
 }
 
+input PostTagUncheckedUpdateManyWithoutPostTagInput {
+  id: IntFieldUpdateOperationsInput
+  postId: IntFieldUpdateOperationsInput
+}
+
 input PostTagUncheckedUpdateManyWithoutTagsInput {
   id: IntFieldUpdateOperationsInput
   tagId: IntFieldUpdateOperationsInput
@@ -848,6 +982,11 @@ input PostTagUncheckedUpdateManyWithoutTagsInput {
 
 input PostTagUpdateManyWithWhereWithoutPostInput {
   data: PostTagUncheckedUpdateManyWithoutTagsInput!
+  where: PostTagScalarWhereInput!
+}
+
+input PostTagUpdateManyWithWhereWithoutTagInput {
+  data: PostTagUncheckedUpdateManyWithoutPostTagInput!
   where: PostTagScalarWhereInput!
 }
 
@@ -865,8 +1004,27 @@ input PostTagUpdateManyWithoutPostInput {
   upsert: [PostTagUpsertWithWhereUniqueWithoutPostInput!]
 }
 
+input PostTagUpdateManyWithoutTagInput {
+  connect: [PostTagWhereUniqueInput!]
+  connectOrCreate: [PostTagCreateOrConnectWithoutTagInput!]
+  create: [PostTagCreateWithoutTagInput!]
+  createMany: PostTagCreateManyTagInputEnvelope
+  delete: [PostTagWhereUniqueInput!]
+  deleteMany: [PostTagScalarWhereInput!]
+  disconnect: [PostTagWhereUniqueInput!]
+  set: [PostTagWhereUniqueInput!]
+  update: [PostTagUpdateWithWhereUniqueWithoutTagInput!]
+  updateMany: [PostTagUpdateManyWithWhereWithoutTagInput!]
+  upsert: [PostTagUpsertWithWhereUniqueWithoutTagInput!]
+}
+
 input PostTagUpdateWithWhereUniqueWithoutPostInput {
   data: PostTagUpdateWithoutPostInput!
+  where: PostTagWhereUniqueInput!
+}
+
+input PostTagUpdateWithWhereUniqueWithoutTagInput {
+  data: PostTagUpdateWithoutTagInput!
   where: PostTagWhereUniqueInput!
 }
 
@@ -874,9 +1032,19 @@ input PostTagUpdateWithoutPostInput {
   tag: TagUpdateOneRequiredWithoutPostTagInput
 }
 
+input PostTagUpdateWithoutTagInput {
+  post: PostUpdateOneRequiredWithoutTagsInput
+}
+
 input PostTagUpsertWithWhereUniqueWithoutPostInput {
   create: PostTagCreateWithoutPostInput!
   update: PostTagUpdateWithoutPostInput!
+  where: PostTagWhereUniqueInput!
+}
+
+input PostTagUpsertWithWhereUniqueWithoutTagInput {
+  create: PostTagCreateWithoutTagInput!
+  update: PostTagUpdateWithoutTagInput!
   where: PostTagWhereUniqueInput!
 }
 
@@ -932,6 +1100,14 @@ input PostUpdateManyWithoutAuthorInput {
   update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
   updateMany: [PostUpdateManyWithWhereWithoutAuthorInput!]
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input PostUpdateOneRequiredWithoutTagsInput {
+  connect: PostWhereUniqueInput
+  connectOrCreate: PostCreateOrConnectWithoutTagsInput
+  create: PostCreateWithoutTagsInput
+  update: PostUpdateWithoutTagsInput
+  upsert: PostUpsertWithoutTagsInput
 }
 
 input PostUpdateOneWithoutCommentsInput {
@@ -992,6 +1168,17 @@ input PostUpdateWithoutReactionsInput {
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
+input PostUpdateWithoutTagsInput {
+  author: UserUpdateOneRequiredWithoutPostsInput
+  comments: PostCommentUpdateManyWithoutPostInput
+  content: StringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  published: BoolFieldUpdateOperationsInput
+  reactions: PostReactionUpdateManyWithoutPostInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
 input PostUpsertWithWhereUniqueWithoutAuthorInput {
   create: PostCreateWithoutAuthorInput!
   update: PostUpdateWithoutAuthorInput!
@@ -1006,6 +1193,11 @@ input PostUpsertWithoutCommentsInput {
 input PostUpsertWithoutReactionsInput {
   create: PostCreateWithoutReactionsInput!
   update: PostUpdateWithoutReactionsInput!
+}
+
+input PostUpsertWithoutTagsInput {
+  create: PostCreateWithoutTagsInput!
+  update: PostUpdateWithoutTagsInput!
 }
 
 input PostWhereInput {
@@ -1119,11 +1311,15 @@ input ProfileWhereInput {
 
 input ProfileWhereUniqueInput {
   id: Int
+  userId: String
 }
 
 type Query {
-  posts(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
-  users(cursor: UserWhereUniqueInput, distinct: [UserScalarFieldEnum!], orderBy: [UserOrderByWithRelationInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
+  post(cursor: PostWhereUniqueInput, distinct: [PostScalarFieldEnum!], orderBy: [PostOrderByWithRelationInput!], skip: Int, take: Int, where: PostWhereInput): [Post!]!
+  postComment(cursor: PostCommentWhereUniqueInput, distinct: [PostCommentScalarFieldEnum!], orderBy: [PostCommentOrderByWithRelationInput!], skip: Int, take: Int, where: PostCommentWhereInput): [PostComment!]!
+  postReaction(cursor: PostReactionWhereUniqueInput, distinct: [PostReactionScalarFieldEnum!], orderBy: [PostReactionOrderByWithRelationInput!], skip: Int, take: Int, where: PostReactionWhereInput): [PostReaction!]!
+  tag(cursor: TagWhereUniqueInput, distinct: [TagScalarFieldEnum!], orderBy: [TagOrderByWithRelationInput!], skip: Int, take: Int, where: TagWhereInput): [Tag!]!
+  user(cursor: UserWhereUniqueInput, distinct: [UserScalarFieldEnum!], orderBy: [UserOrderByWithRelationInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
 }
 
 enum QueryMode {
@@ -1194,6 +1390,8 @@ input StringNullableFilter {
 
 type Subscription {
   postChanged: Post!
+  postCommentChanged: PostComment!
+  postReactionChanged: PostReaction!
 }
 
 type Tag {
@@ -1207,6 +1405,13 @@ type Tag {
 
 type TagCount {
   PostTag: Int!
+}
+
+input TagCreateInput {
+  PostTag: PostTagCreateNestedManyWithoutTagInput
+  createdAt: DateTime
+  name: String!
+  updatedAt: DateTime
 }
 
 input TagCreateNestedOneWithoutPostTagInput {
@@ -1224,6 +1429,28 @@ input TagCreateWithoutPostTagInput {
   createdAt: DateTime
   name: String!
   updatedAt: DateTime
+}
+
+input TagOrderByWithRelationInput {
+  PostTag: PostTagOrderByRelationAggregateInput
+  createdAt: SortOrder
+  id: SortOrder
+  name: SortOrder
+  updatedAt: SortOrder
+}
+
+enum TagScalarFieldEnum {
+  createdAt
+  id
+  name
+  updatedAt
+}
+
+input TagUpdateInput {
+  PostTag: PostTagUpdateManyWithoutTagInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
 input TagUpdateOneRequiredWithoutPostTagInput {

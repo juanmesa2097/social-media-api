@@ -8,13 +8,15 @@ import { PostReactionCreateInput } from 'src/@generated/post-reaction/post-react
 import { PostReactionUpdateInput } from 'src/@generated/post-reaction/post-reaction-update.input';
 import { PostReactionWhereUniqueInput } from 'src/@generated/post-reaction/post-reaction-where-unique.input';
 import { PostReaction } from 'src/@generated/post-reaction/post-reaction.model';
+import { Authorize } from '../auth/guards/authorize.guard';
 import { PostReactionService } from './post-reaction.service';
 
+@Authorize()
 @Resolver(() => PostReaction)
 export class PostReactionResolver {
   private readonly POST_REACTION_CREATED = 'post_reaction_created';
   private readonly POST_REACTION_UPDATED = 'post_reaction_updated';
-  private readonly POST_REACTION_REMOVED = 'post_reaction_removed';
+  private readonly POST_REACTION_DELETED = 'post_reaction_deleted';
 
   constructor(
     private postReactionService: PostReactionService,
@@ -22,16 +24,16 @@ export class PostReactionResolver {
   ) {}
 
   @Subscription(() => PostReaction)
-  postChanged() {
+  postReactionChanged() {
     return this.pubSub.asyncIterator([
       this.POST_REACTION_CREATED,
       this.POST_REACTION_UPDATED,
-      this.POST_REACTION_REMOVED,
+      this.POST_REACTION_DELETED,
     ]);
   }
 
   @Query(() => [PostReaction])
-  async postReactions(
+  async postReaction(
     @Args() args: FindManyPostReactionArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<PostReaction[]> {
@@ -41,9 +43,9 @@ export class PostReactionResolver {
 
   @Mutation(() => PostReaction)
   async postReactionCreate(@Args('data') data: PostReactionCreateInput): Promise<PostReaction> {
-    const createdPost = this.postReactionService.create(data);
-    this.pubSub.publish(this.POST_REACTION_CREATED, { postChanged: createdPost });
-    return createdPost;
+    const createdPostReaction = this.postReactionService.create(data);
+    this.pubSub.publish(this.POST_REACTION_CREATED, { postReactionChanged: createdPostReaction });
+    return createdPostReaction;
   }
 
   @Mutation(() => PostReaction)
@@ -51,17 +53,17 @@ export class PostReactionResolver {
     @Args('data') data: PostReactionUpdateInput,
     @Args('where') where: PostReactionWhereUniqueInput,
   ): Promise<PostReaction> {
-    const updatedPost = this.postReactionService.update(data, where);
-    this.pubSub.publish(this.POST_REACTION_UPDATED, { postChanged: updatedPost });
-    return updatedPost;
+    const updatedPostReaction = this.postReactionService.update(data, where);
+    this.pubSub.publish(this.POST_REACTION_UPDATED, { postReactionChanged: updatedPostReaction });
+    return updatedPostReaction;
   }
 
   @Mutation(() => PostReaction)
   async postReactionDelete(
     @Args('where') where: PostReactionWhereUniqueInput,
   ): Promise<PostReaction> {
-    const deletedPost = this.postReactionService.delete(where);
-    this.pubSub.publish(this.POST_REACTION_UPDATED, { postChanged: deletedPost });
-    return deletedPost;
+    const deletedPostReaction = this.postReactionService.delete(where);
+    this.pubSub.publish(this.POST_REACTION_DELETED, { postReactionChanged: deletedPostReaction });
+    return deletedPostReaction;
   }
 }
