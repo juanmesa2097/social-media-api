@@ -17,7 +17,7 @@ export class UserResolver {
   constructor(private usersService: UserService) {}
 
   @Query(() => [User])
-  async users(@Args() args: FindManyUserArgs, @Info() info: GraphQLResolveInfo): Promise<User[]> {
+  async user(@Args() args: FindManyUserArgs, @Info() info: GraphQLResolveInfo): Promise<User[]> {
     const select = new PrismaSelect(info).value;
     return this.usersService.get(args, select);
   }

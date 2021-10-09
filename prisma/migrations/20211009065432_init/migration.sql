@@ -1,26 +1,26 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'INACTIVE');
 
-  - You are about to drop the column `authorId` on the `post` table. All the data in the column will be lost.
-  - You are about to drop the `user_detail` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `author_id` to the `post` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "ReactionType" AS ENUM ('LIKE', 'DISLIKE');
 
--- DropForeignKey
-ALTER TABLE "post" DROP CONSTRAINT "post_authorId_fkey";
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
--- DropForeignKey
-ALTER TABLE "user_detail" DROP CONSTRAINT "user_detail_user_id_fkey";
+-- CreateTable
+CREATE TABLE "user" (
+    "id" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "email" VARCHAR(60) NOT NULL,
+    "email_confirmed" BOOLEAN NOT NULL DEFAULT false,
+    "two_factor_enabled" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "status" "UserStatus" NOT NULL DEFAULT E'ACTIVE',
+    "role" "Role" NOT NULL DEFAULT E'USER',
 
--- AlterTable
-ALTER TABLE "post" DROP COLUMN "authorId",
-ADD COLUMN     "author_id" TEXT NOT NULL;
-
--- DropTable
-DROP TABLE "user_detail";
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "profile" (
@@ -35,6 +35,19 @@ CREATE TABLE "profile" (
     "user_id" TEXT NOT NULL,
 
     CONSTRAINT "profile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "post" (
+    "id" SERIAL NOT NULL,
+    "title" VARCHAR(45) NOT NULL,
+    "content" TEXT NOT NULL,
+    "published" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "author_id" TEXT NOT NULL,
+
+    CONSTRAINT "post_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -81,7 +94,10 @@ CREATE TABLE "tag" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "profile_user_id_unique" ON "profile"("user_id");
+CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "profile_user_id_key" ON "profile"("user_id");
 
 -- AddForeignKey
 ALTER TABLE "profile" ADD CONSTRAINT "profile_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

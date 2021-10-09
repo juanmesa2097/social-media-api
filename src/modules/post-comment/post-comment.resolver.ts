@@ -12,11 +12,11 @@ import { Authorize } from '../auth/guards/authorize.guard';
 import { PostCommentService } from './post-comment.service';
 
 @Authorize()
-@Resolver()
+@Resolver(() => PostComment)
 export class PostCommentResolver {
   private readonly POST_COMMENT_CREATED = 'post_comment_created';
   private readonly POST_COMMENT_UPDATED = 'post_comment_updated';
-  private readonly POST_COMMENT_REMOVED = 'post_comment_removed';
+  private readonly POST_COMMENT_DELETED = 'post_comment_deleted';
 
   constructor(
     private postCommentService: PostCommentService,
@@ -24,16 +24,16 @@ export class PostCommentResolver {
   ) {}
 
   @Subscription(() => PostComment)
-  postChanged() {
+  postCommentChanged() {
     return this.pubSub.asyncIterator([
       this.POST_COMMENT_CREATED,
       this.POST_COMMENT_UPDATED,
-      this.POST_COMMENT_REMOVED,
+      this.POST_COMMENT_DELETED,
     ]);
   }
 
   @Query(() => [PostComment])
-  async postComments(
+  async postComment(
     @Args() args: FindManyPostCommentArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<PostComment[]> {
@@ -43,9 +43,9 @@ export class PostCommentResolver {
 
   @Mutation(() => PostComment)
   async postCommentCreate(@Args('data') data: PostCommentCreateInput): Promise<PostComment> {
-    const createdPost = this.postCommentService.create(data);
-    this.pubSub.publish(this.POST_COMMENT_CREATED, { postChanged: createdPost });
-    return createdPost;
+    const createdPostComment = this.postCommentService.create(data);
+    this.pubSub.publish(this.POST_COMMENT_CREATED, { postCommentChanged: createdPostComment });
+    return createdPostComment;
   }
 
   @Mutation(() => PostComment)
@@ -53,15 +53,15 @@ export class PostCommentResolver {
     @Args('data') data: PostCommentUpdateInput,
     @Args('where') where: PostCommentWhereUniqueInput,
   ): Promise<PostComment> {
-    const updatedPost = this.postCommentService.update(data, where);
-    this.pubSub.publish(this.POST_COMMENT_UPDATED, { postChanged: updatedPost });
-    return updatedPost;
+    const updatedPostComment = this.postCommentService.update(data, where);
+    this.pubSub.publish(this.POST_COMMENT_UPDATED, { postCommentChanged: updatedPostComment });
+    return updatedPostComment;
   }
 
   @Mutation(() => PostComment)
   async postCommentDelete(@Args('where') where: PostCommentWhereUniqueInput): Promise<PostComment> {
-    const deletedPost = this.postCommentService.delete(where);
-    this.pubSub.publish(this.POST_COMMENT_UPDATED, { postChanged: deletedPost });
-    return deletedPost;
+    const deletedPostComment = this.postCommentService.delete(where);
+    this.pubSub.publish(this.POST_COMMENT_DELETED, { postCommentChanged: deletedPostComment });
+    return deletedPostComment;
   }
 }

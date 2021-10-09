@@ -11,26 +11,26 @@ import { Post } from 'src/@generated/post/post.model';
 import { Authorize } from '../auth/guards/authorize.guard';
 import { PostService } from './post.service';
 
+@Authorize()
 @Resolver(() => Post)
 export class PostResolver {
   private readonly POST_CREATED = 'post_created';
   private readonly POST_UPDATED = 'post_updated';
-  private readonly POST_REMOVED = 'post_removed';
+  private readonly POST_DELETED = 'post_deleted';
 
   constructor(private postService: PostService, @Inject('PUB_SUB') private pubSub: PubSub) {}
 
   @Subscription(() => Post)
   postChanged() {
-    return this.pubSub.asyncIterator([this.POST_CREATED, this.POST_UPDATED, this.POST_REMOVED]);
+    return this.pubSub.asyncIterator([this.POST_CREATED, this.POST_UPDATED, this.POST_DELETED]);
   }
 
   @Query(() => [Post])
-  async posts(@Args() args: FindManyPostArgs, @Info() info: GraphQLResolveInfo): Promise<Post[]> {
+  async post(@Args() args: FindManyPostArgs, @Info() info: GraphQLResolveInfo): Promise<Post[]> {
     const select = new PrismaSelect(info).value;
     return this.postService.get(args, select);
   }
 
-  @Authorize()
   @Mutation(() => Post)
   async postCreate(@Args('data') data: PostCreateInput): Promise<Post> {
     const createdPost = this.postService.create(data);
@@ -38,7 +38,6 @@ export class PostResolver {
     return createdPost;
   }
 
-  @Authorize()
   @Mutation(() => Post)
   async postUpdate(
     @Args('data') data: PostUpdateInput,
@@ -49,11 +48,10 @@ export class PostResolver {
     return updatedPost;
   }
 
-  @Authorize()
   @Mutation(() => Post)
   async postDelete(@Args('where') where: PostWhereUniqueInput): Promise<Post> {
     const deletedPost = this.postService.delete(where);
-    this.pubSub.publish(this.POST_REMOVED, { postChanged: deletedPost });
+    this.pubSub.publish(this.POST_DELETED, { postChanged: deletedPost });
     return deletedPost;
   }
 }

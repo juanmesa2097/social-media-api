@@ -10,12 +10,12 @@ import { Authorize } from '../auth/guards/authorize.guard';
 import { TagService } from './tag.service';
 
 @Authorize()
-@Resolver()
+@Resolver(() => Tag)
 export class TagResolver {
   constructor(private tagService: TagService) {}
 
   @Query(() => [Tag])
-  async tags(@Args() args: FindManyTagArgs, @Info() info: GraphQLResolveInfo): Promise<Tag[]> {
+  async tag(@Args() args: FindManyTagArgs, @Info() info: GraphQLResolveInfo): Promise<Tag[]> {
     const select = new PrismaSelect(info).value;
     return this.tagService.get(args, select);
   }
